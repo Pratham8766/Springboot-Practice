@@ -1,12 +1,15 @@
 package com.mylearning.firstproject.Repository;
 
 import com.mylearning.firstproject.Entity.Student;
+import com.mylearning.firstproject.Entity.StudentMarksProjection;
 import com.sun.org.glassfish.gmbal.ManagedData;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface StudentRepository extends JpaRepository<Student, Integer> {
@@ -21,4 +24,8 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
     @Modifying
     @Query(value = "DELETE FROM student WHERE roll_no=:roll_no", nativeQuery = true)
     void deleteStudent(@Param("roll_no") int roll_no);
+
+    @Query(value = "select s.name, s.email, m.math, m.science, m.english from student s join marks m on s.roll_no=m.roll_no and m.english>80", nativeQuery = true)
+//    List<StudentMarksProjection> getStudentMarks();
+    List<Object[]> getStudentMarks();
 }

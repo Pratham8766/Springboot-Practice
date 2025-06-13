@@ -2,8 +2,10 @@ package com.mylearning.firstproject.Controller;
 
 import com.mylearning.firstproject.Builder.ResponseWrapper;
 import com.mylearning.firstproject.Entity.Student;
+import com.mylearning.firstproject.Entity.StudentMarksProjection;
 import com.mylearning.firstproject.Model.StudentModel;
 import com.mylearning.firstproject.Service.StudentService;
+import com.mylearning.firstproject.dto.StudentMarksDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -83,13 +85,16 @@ public class MyController {
                 .build();
     }
 
-    @GetMapping("/teachers")
-    public ResponseWrapper<Object> getTeachers(){
+    @GetMapping("/marks")
+    public ResponseWrapper<Object> getMarks(){
+//        List<StudentMarksProjection> marks = studentService.getMarks();
+        List<StudentMarksDTO> marks = studentService.getMarks();
+
         return ResponseWrapper.builder()
                 .id("12")
                 .type("Teachers")
                 .code(ResponseEntity.status(HttpStatus.OK).toString())
-                .attributes(data)
+                .attributes(marks)
                 .build()
                 ;
     }
