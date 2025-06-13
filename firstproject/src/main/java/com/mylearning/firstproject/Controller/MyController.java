@@ -21,7 +21,7 @@ import static com.mylearning.firstproject.constants.StudentConstants.STUDENT_DAT
 public class MyController {
     
     @Autowired
-    private StudentService studentService;
+    private final StudentService studentService;
 
     public MyController(StudentService studentService){
         this.studentService = studentService;
@@ -39,40 +39,48 @@ public class MyController {
                 .build();
     }
 
-    @GetMapping("/getStudentDataById")
-    public ResponseWrapper<Object> getStudentById(@RequestParam String id1){
+    @GetMapping("/getSpecificStudent/{roll_no}")
+    public ResponseWrapper<Object> getSpecificStudent(@PathVariable String roll_no){
+        Student specificStudent = studentService.getSpecificStudent(Integer.parseInt(roll_no));
          return ResponseWrapper.builder()
                  .id(STUDENT_DATA_BY_ID)
                  .type("Getting student data by Id")
-                 .attributes(data.get(Long.parseLong(id1)))
+                 .attributes(specificStudent)
+                 .code(HttpStatus.OK.toString())
                  .build();
     }
 
     @PostMapping("/setStudentData")
-    public ResponseWrapper<Object> setStudentData(@RequestBody StudentModel student){
-        data.put(Long.parseLong(student.getId()), student);
+    public ResponseWrapper<Object> setStudentData(@RequestBody Student student){
+        Student s = studentService.postStudent(student);
         return ResponseWrapper.builder()
                 .id(STUDENT_DATA)
                 .type("Getting student list")
                 .attributes(data)
+                .code(HttpStatus.OK.toString())
                 .build();
     }
 
-    @PutMapping("/updateName/{id}/{name}")
-    public ResponseWrapper<Object> updateStudentName(@PathVariable String id, @PathVariable String name){
-        StudentModel s = data.get(Long.parseLong(id));
-        s.setName(name);
-        data.put(Long.parseLong(id), s);
+    @PutMapping("/updateName/{roll_no}/{name}")
+    public ResponseWrapper<Object> updateStudentName(@PathVariable String roll_no, @PathVariable String name){
+       studentService.updateStudentName(Integer.parseInt(roll_no), name);
         return ResponseWrapper.builder()
                 .id(STUDENT_DATA)
-                .type("Getting student list")
-                .attributes(s)
+                .type("Updated StudentName")
+                .attributes("Student Name updated")
+                .code(HttpStatus.OK.toString())
                 .build();
     }
 
     @DeleteMapping("/deleteStudent")
-    public void deleteStudentData(@RequestParam String id){
-        data.remove(Long.parseLong(id));
+    public ResponseWrapper<Object> deleteStudentData(@RequestParam String rollNo){
+        studentService.deleteStudent(Integer.parseInt(rollNo));
+        return ResponseWrapper.builder()
+                .id(STUDENT_DATA)
+                .type("Updated StudentName")
+                .attributes("Student Deleted")
+                .code(HttpStatus.OK.toString())
+                .build();
     }
 
     @GetMapping("/teachers")
